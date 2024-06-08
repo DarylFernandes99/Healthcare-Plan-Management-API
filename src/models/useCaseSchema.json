@@ -1,0 +1,57 @@
+{
+    "type": "object",
+    "properties": {
+        "_org": { "type": "string" },
+        "objectId": { "type": "string" },
+        "objectType": { "type": "string" },
+        "planType": { "type": "string" },
+        "creationDate": { "type": "string" },
+        "planCostShares": {
+            "type": "object",
+            "properties": {
+                "_org": { "type": "string" },
+                "objectId": { "type": "string" },
+                "objectType": { "type": "string" },
+                "copay": { "type": "number" },
+                "deductible": { "type": "number" }
+            },
+            "required": [ "deductible", "_org", "objectId", "objectType" ],
+            "additionalProperties": true
+        },
+        "linkedPlanServices": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "_org": { "type": "string" },
+                    "objectId": { "type": "string" },
+                    "objectType": { "type": "string" },
+                    "linkedService": {
+                        "type": "object",
+                        "properties": {
+                            "_org": { "type": "string" },
+                            "objectId": { "type": "string" },
+                            "objectType": { "type": "string" },
+                            "name": { "type": "string" }
+                        },
+                        "required": [ "_org", "objectId", "objectType", "name" ]
+                    },
+                    "planserviceCostShares": {
+                        "type": "object",
+                        "properties": {
+                            "_org": { "type": "string" },
+                            "objectId": { "type": "string" },
+                            "objectType": { "type": "string" },
+                            "copay": { "type": "number" },
+                            "deductible": { "type": "number" }
+                        },
+                        "required": [ "deductible", "_org", "objectId", "objectType" ],
+                        "additionalProperties": true
+                    }
+                },
+                "required": [ "_org", "objectId", "objectType", "linkedService", "planserviceCostShares" ]
+            }
+        }
+    },
+    "required": [ "_org", "objectId", "objectType", "planType", "creationDate", "planCostShares", "linkedPlanServices" ]
+}
