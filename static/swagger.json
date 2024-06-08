@@ -1,0 +1,184 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"description": "INFO 7125 - Adv Big-Data App/Indexing",
+		"version": "1.0.0",
+		"title": "INFO 7125 - Adv Big-Data App/Indexing"
+	},
+	"tags": [
+		{
+			"name": "Public",
+			"description": "Operations available to all users without authentication"
+		}
+	],
+	"paths": {
+		"/v1/plan": {
+			"post": {
+				"tags": [
+					"Public"
+				],
+				"summary": "Create a plan",
+				"description": "Create a plan",
+				"consumes": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"name": "Plan data",
+						"in": "body",
+						"description": "JSON data for the api",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/Plans"
+						}
+					}
+				],
+				"responses": {
+					"201": {
+						"description": "Plan created",
+						"schema": {
+							"$ref": "#/definitions/Plans"
+						}
+					},
+					"409": {
+						"description": "Plan already exists"
+					},
+					"400": {
+						"description": "Bad Request"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				}
+			}
+		},
+		"/v1/plan/{plan_id}": {
+			"get": {
+				"tags": [
+					"Public"
+				],
+				"summary": "Create a plan",
+				"description": "Create a plan",
+				"parameters": [
+					{
+						"name": "plan_id",
+						"in": "path",
+						"description": "Plan ID to fetch plan",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "If-None-Match",
+						"in": "header",
+						"description": "Etag id of get request",
+						"required": false,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Fetch Plan",
+						"schema": {
+							"$ref": "#/definitions/Plans"
+						}
+					},
+					"309": {
+						"description": "Plan not modified"
+					},
+					"400": {
+						"description": "No Plan found"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				}
+			},
+			"delete": {
+				"tags": [
+					"Public"
+				],
+				"summary": "Delete a plan",
+				"description": "Delete a plan",
+				"parameters": [
+					{
+						"name": "plan_id",
+						"in": "path",
+						"description": "Plan ID to delete plan",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Deleted Plan"
+					},
+					"400": {
+						"description": "No Plan found"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				}
+			}
+		}
+	},
+	"definitions": {
+		"Plans": {
+			"type": "object",
+			"properties": {
+				"_org": { "type": "string" },
+				"objectId": { "type": "string" },
+				"objectType": { "type": "string" },
+				"planType": { "type": "string" },
+				"creationDate": { "type": "string" },
+				"planCostShares": {
+					"type": "object",
+					"properties": {
+						"_org": { "type": "string" },
+						"objectId": { "type": "string" },
+						"objectType": { "type": "string" },
+						"copay": { "type": "number" },
+						"deductible": { "type": "number" }
+					},
+					"required": [ "deductible", "_org", "objectId", "objectType" ],
+					"additionalProperties": true
+				},
+				"linkedPlanServices": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"_org": { "type": "string" },
+							"objectId": { "type": "string" },
+							"objectType": { "type": "string" },
+							"linkedService": {
+								"type": "object",
+								"properties": {
+									"_org": { "type": "string" },
+									"objectId": { "type": "string" },
+									"objectType": { "type": "string" },
+									"name": { "type": "string" }
+								},
+								"required": [ "_org", "objectId", "objectType", "name" ]
+							},
+							"planserviceCostShares": {
+								"type": "object",
+								"properties": {
+									"_org": { "type": "string" },
+									"objectId": { "type": "string" },
+									"objectType": { "type": "string" },
+									"copay": { "type": "number" },
+									"deductible": { "type": "number" }
+								},
+								"required": [ "deductible", "_org", "objectId", "objectType" ],
+								"additionalProperties": true
+							}
+						},
+						"required": [ "_org", "objectId", "objectType", "linkedService", "planserviceCostShares" ]
+					}
+				}
+			},
+			"required": [ "_org", "objectId", "objectType", "planType", "creationDate", "planCostShares", "linkedPlanServices" ]
+		}
+	}
+}

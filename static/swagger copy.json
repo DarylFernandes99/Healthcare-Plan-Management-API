@@ -1,0 +1,305 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"description": "INFO 7125 - Adv Big-Data App/Indexing",
+		"version": "1.0.0",
+		"title": "INFO 7125 - Adv Big-Data App/Indexing"
+	},
+	"tags": [
+		{
+			"name": "Authenticated",
+			"description": "Operations available only to authenticated users"
+		},
+		{
+			"name": "Public",
+			"description": "Operations available to all users without authentication"
+		}
+	],
+	"securityDefinitions": {
+		"basicAuth": {
+			"type": "basic"
+		}
+	},
+	"paths": {
+		"/healthz": {
+			"get": {
+				"tags": [
+					"Public"
+				],
+				"summary": "Health endpoint",
+				"description": "Health endpoint",
+				"operationId": "healthCheck",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "server responds with 200 OK if it is healhty."
+					},
+					"503": {
+						"description": "server responds with 503 if it is not healhty."
+					}
+				}
+			},
+			"head": {
+				"tags": [
+					"Public"
+				],
+				"summary": "Health endpoint",
+				"description": "Health endpoint",
+				"operationId": "healthCheck_head",
+				"parameters": [],
+				"responses": {
+					"405": {
+						"description": "server responds with 405 Method Not Allowed."
+					}
+				}
+			},
+			"post": {
+				"tags": [
+					"Public"
+				],
+				"summary": "Health endpoint",
+				"description": "Health endpoint",
+				"operationId": "healthCheck_post",
+				"parameters": [],
+				"responses": {
+					"405": {
+						"description": "server responds with 405 Method Not Allowed."
+					}
+				}
+			},
+			"put": {
+				"tags": [
+					"Public"
+				],
+				"summary": "Health endpoint",
+				"description": "Health endpoint",
+				"operationId": "healthCheck_put",
+				"parameters": [],
+				"responses": {
+					"405": {
+						"description": "server responds with 405 Method Not Allowed."
+					}
+				}
+			},
+			"delete": {
+				"tags": [
+					"Public"
+				],
+				"summary": "Health endpoint",
+				"description": "Health endpoint",
+				"operationId": "healthCheck_delete",
+				"parameters": [],
+				"responses": {
+					"405": {
+						"description": "server responds with 405 Method Not Allowed."
+					}
+				}
+			},
+			"options": {
+				"tags": [
+					"Public"
+				],
+				"summary": "Health endpoint",
+				"description": "Health endpoint",
+				"operationId": "healthCheck_options",
+				"parameters": [],
+				"responses": {
+					"405": {
+						"description": "server responds with 405 Method Not Allowed."
+					}
+				}
+			}
+		},
+		"/v1/user": {
+			"post": {
+				"tags": [
+					"Public"
+				],
+				"summary": "Create a user",
+				"description": "Create a user",
+				"consumes": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"name": "User data",
+						"in": "body",
+						"description": "JSON data for the api",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/Users"
+						}
+					}
+				],
+				"responses": {
+					"201": {
+						"description": "User created",
+						"schema": {
+							"$ref": "#/definitions/Users"
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			}
+		},
+		"/v1/user/self": {
+			"get": {
+				"security": [
+					{
+						"basicAuth": []
+					}
+				],
+				"tags": [
+					"Authenticated"
+				],
+				"summary": "Get User Information",
+				"description": "Get User Information",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"id": {
+									"type": "string",
+									"format": "uuid",
+									"example": "ab37303d-ba90-4be5-b437-4a417ef811bb",
+									"readOnly": true
+								},
+								"first_name": {
+									"type": "string",
+									"example": "John"
+								},
+								"last_name": {
+									"type": "string",
+									"example": "Doe"
+								},
+								"username": {
+									"type": "string",
+									"format": "email",
+									"example": "johndoe@example.com"
+								},
+								"account_created": {
+									"type": "string",
+									"format": "date-time",
+									"example": "Mon, 05 Feb 2024 05:02:43 GMT",
+									"readOnly": true
+								},
+								"account_updated": {
+									"type": "string",
+									"format": "date-time",
+									"example": "Mon, 05 Feb 2024 05:02:43 GMT",
+									"readOnly": true
+								}
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"security": [
+					{
+						"basicAuth": []
+					}
+				],
+				"tags": [
+					"Authenticated"
+				],
+				"summary": "Update user information",
+				"description": "Update user information",
+				"consumes": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"name": "User data",
+						"in": "body",
+						"description": "JSON data for the api",
+						"required": true,
+						"schema": {
+							"type": "object",
+							"properties": {
+								"first_name": {
+									"type": "string",
+									"example": "John"
+								},
+								"last_name": {
+									"type": "string",
+									"example": "Doe"
+								},
+								"password": {
+									"type": "string",
+									"format": "password",
+									"example": "f6d3guhdi2oks82s",
+									"writeOnly": true
+								}
+							}
+						}
+					}
+				],
+				"responses": {
+					"204": {
+						"description": "No Content"
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			}
+		}
+	},
+	"definitions": {
+		"Users": {
+			"type": "object",
+			"required": [
+				"id",
+				"first_name",
+				"last_name",
+				"username",
+				"password"
+			],
+			"properties": {
+				"id": {
+					"type": "string",
+					"format": "uuid",
+					"example": "ab37303d-ba90-4be5-b437-4a417ef811bb",
+					"readOnly": true
+				},
+				"first_name": {
+					"type": "string",
+					"example": "John"
+				},
+				"last_name": {
+					"type": "string",
+					"example": "Doe"
+				},
+				"username": {
+					"type": "string",
+					"format": "email",
+					"example": "johndoe@example.com"
+				},
+				"password": {
+					"type": "string",
+					"format": "password",
+					"example": "f6d3guhdi2oks82s",
+					"writeOnly": true
+				},
+				"account_created": {
+					"type": "string",
+					"format": "date-time",
+					"example": "Mon, 05 Feb 2024 05:02:43 GMT",
+					"readOnly": true
+				},
+				"account_updated": {
+					"type": "string",
+					"format": "date-time",
+					"example": "Mon, 05 Feb 2024 05:02:43 GMT",
+					"readOnly": true
+				}
+			}
+		}
+	}
+}
