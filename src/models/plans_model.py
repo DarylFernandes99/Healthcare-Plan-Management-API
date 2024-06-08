@@ -21,9 +21,9 @@ class PlanModel(RedisModel):
 
     def create_plan(self, plan):
         plan_data = plan
+        self.validate_data(plan_data)
         plan_id = plan_data['objectId']
         if not self.get_plan(plan_id):
-            self.validate_data(plan_data)
             self.save(plan_id, plan_data)
             return 1
         return 0
@@ -43,6 +43,9 @@ class PlanModel(RedisModel):
 
     def get_plan(self, plan_id) -> int:
         return self.get(plan_id)
+
+    def get_multiple_plans(self) -> list:
+        return self.get_multiple_values("plan:")
 
     def delete_plan(self, plan_id):
         return self.delete(plan_id)

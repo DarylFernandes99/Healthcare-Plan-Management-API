@@ -26,6 +26,13 @@ class RedisModel:
         logger.info("Failed to get data from redis - {}".format(key))
         return None
     
+    def get_multiple_values(self, regexp):
+        _, keys = self.redis_client.scan(match=f"{regexp}*")
+        keys = [key.decode("utf-8") for key in keys]
+        data = self.redis_client.mget(keys)
+        data = [json.loads(d.decode("utf-8")) for d in data]
+        return data
+    
     def check_key_exists(self, id):
         key = self.get_key(id)
         logger.info("Check key exists in redis - {}".format(key))
