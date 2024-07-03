@@ -1,5 +1,5 @@
 from flask import request, Response, json, Blueprint
-# from src.middlewares.auth_middleware import authorization_required
+from src.middlewares.auth_middleware import authorization_required
 from src import plan_model, etag_model
 import logging
 
@@ -9,7 +9,8 @@ logger = logging.getLogger(__name__)
 plans = Blueprint("plans", __name__)
 
 @plans.route('', methods=['POST', 'GET'])
-def create_user() -> Response:
+@authorization_required
+def create_user(_: dict) -> Response:
     plan_data_obj = None
     try:
         if request.method == 'POST':
@@ -96,17 +97,16 @@ def create_user() -> Response:
             mimetype="application/json"
         )
 
-@plans.route('/<plan_id>', methods=['GET', 'PUT', 'DELETE'])
-# @authorization_required
-# def get_update_controller(current_user: Users) -> Response:
-def get_update_controller(plan_id: str) -> Response:
+@plans.route('/<plan_id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
+@authorization_required
+def get_update_controller(_: dict, plan_id: str) -> Response:
     try:
         # Put Request
         if request.method == 'PUT':
             return Response(status=400)
         # Delete request
         elif request.method == 'DELETE':
-            if plan_model.delete_plan(plan_id):
+            if plan_model.delete_plan_etag(plan_id):
                 logger.info("Plan deleted successfully - {}".format(plan_id))
                 return Response(
                     response=json.dumps({
@@ -116,10 +116,58 @@ def get_update_controller(plan_id: str) -> Response:
                     status=200,
                     mimetype="application/json"
                 )
+        # PATCH request
+        elif request.method == 'PATCH':
+            if_none_match = request.headers.get('If-None-Match')
+            if if_none_match and plan_model.check_etag_exists(if_none_match):
+                logger.warning("Content not modified")
+                return Response(status=304)
+            
+            try:
+                plan_data_obj = request.json
+                plan_data = plan_model.update_plan_partial(plan_id, plan_data_obj)
+                if plan_data:
+                    logger.info("Plan updated successfully - {}".format(plan_id))
+                    plan_model.delete_plan_etag(plan_id, delete_plan=False)
+                    response = Response(
+                        response=json.dumps({
+                            "status": "success",
+                            "message": "Plan updated successfully",
+                            "data": plan_data
+                        }),
+                        status=200,
+                        mimetype="application/json"
+                    )
+                    response.add_etag()
+                    etag_value = response.headers.get("Etag").strip('\"')
+                    logger.info("Saved updated Etag value - {}".format(etag_value))
+                    # etag_model.save_etag(etag_value, plan_data)
+                    plan_model.create_etag(plan_id, etag_value)
+
+                    return response
+                logger.error("Failed to update Plan - Plan not found!")
+                return Response(
+                    response=json.dumps({
+                        "status": "failed",
+                        "message": "Plan not found!"
+                    }),
+                    status=404,
+                    mimetype="application/json"
+                )
+            except Exception as e:
+                logger.error(str(e))
+                return Response(
+                    response=json.dumps({
+                        "status": "failed",
+                        "message": str(e)
+                    }),
+                    status=400,
+                    mimetype="application/json"
+                )
         # Get request
         else:
             if_none_match = request.headers.get('If-None-Match')
-            if if_none_match and etag_model.check_key_exists(if_none_match):
+            if if_none_match and plan_model.check_etag_exists(if_none_match):
                 logger.warning("Content not modified")
                 return Response(status=304)
             
@@ -143,7 +191,7 @@ def get_update_controller(plan_id: str) -> Response:
             response.add_etag()
             etag_value = response.headers.get("Etag").strip('\"')
             logger.info("Saved Etag value - {}".format(etag_value))
-            etag_model.save_etag(etag_value, plan_data)
+            plan_model.create_etag(plan_id, etag_value)
             return response
         
         logger.error("Plan not found - {}".format(plan_id))

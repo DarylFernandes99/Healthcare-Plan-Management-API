@@ -15,3 +15,4 @@ class ProductionConfig:
         self.REDIS_HOST = os.environ.get('REDIS_PROD_HOST')
         self.REDIS_PORT = os.environ.get('REDIS_PROD_PORT')
         self.VERSION = os.environ.get('PROD_VERSION')
+        self.OAUTH_CLIENT_ID = os.environ.get('DEV_OAUTH_CLIENT_ID')

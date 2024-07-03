@@ -24,16 +24,22 @@ class RedisModel:
             logger.info("Fetched data from redis - {}".format(key))
             return json.loads(data)
         logger.info("Failed to get data from redis - {}".format(key))
-        return None
+        return 0
     
-    def get_multiple_values(self, regexp):
+    def get_multiple_keys(self, regexp) -> list:
         _, keys = self.redis_client.scan(match=f"{regexp}*")
         keys = [key.decode("utf-8") for key in keys]
+        return keys
+    
+    def get_multiple_values(self, keys) -> list:
         data = self.redis_client.mget(keys)
         data = [json.loads(d.decode("utf-8")) for d in data]
         return data
     
-    def check_key_exists(self, id):
+    def delete_multiple_keys(self, keys) -> int:
+        return self.redis_client.delete(*keys) if keys else 0
+    
+    def check_key_exists(self, id) -> int:
         key = self.get_key(id)
         logger.info("Check key exists in redis - {}".format(key))
         return self.redis_client.exists(key)

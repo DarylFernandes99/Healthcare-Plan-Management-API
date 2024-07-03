@@ -4,5 +4,7 @@ if __name__ == "__main__":
     app.logger.info("Server started running at {}:{}".format(config.HOST, config.PORT))
     app.run(host= config.HOST,
         port= config.PORT,
-        debug= config.DEBUG)
+        debug= config.DEBUG,
+        # ssl_context="adhoc"
+        )
     app.logger.info("Server terminated at {}:{}".format(config.HOST, config.PORT))
