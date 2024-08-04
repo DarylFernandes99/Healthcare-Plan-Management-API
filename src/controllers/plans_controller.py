@@ -27,14 +27,20 @@ def create_user(_: dict) -> Response:
                         mimetype="application/json"
                     )
                 logger.info("Plan created succesffuly")
-                return Response(
+                response = Response(
                     response=json.dumps({
                         "status": "success",
+                        "data": plan_data_obj,
                         "message": "Plan created successfully"
                     }),
                     status=201,
                     mimetype="application/json"
                 )
+                response.add_etag()
+                etag_value = response.headers.get("Etag").strip('\"')
+                logger.info("Created Etag value - {}".format(etag_value))
+                etag_model.save_etag(etag_value, plan_data_obj)
+                return response
             except Exception as e:
                 logger.error(str(e))
                 return Response(
