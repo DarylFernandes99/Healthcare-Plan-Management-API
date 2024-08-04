@@ -118,10 +118,10 @@ def get_update_controller(_: dict, plan_id: str) -> Response:
                 )
         # PATCH request
         elif request.method == 'PATCH':
-            if_none_match = request.headers.get('If-None-Match')
-            if if_none_match and plan_model.check_etag_exists(if_none_match):
-                logger.warning("Content not modified")
-                return Response(status=304)
+            if_none_match = request.headers.get('If-Match')
+            if if_none_match and not plan_model.check_etag_exists(if_none_match):
+                logger.warning("No ETAG found")
+                return Response(status=412)
             
             try:
                 plan_data_obj = request.json
