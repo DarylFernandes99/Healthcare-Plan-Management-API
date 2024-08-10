@@ -40,8 +40,10 @@ app.logger.addHandler(handler)
 
 # import plans model
 from src.models.plans_model import PlanModel
+from src.models.elastic_search_model import ElasticSearchConfig
 redis_client_plan = Redis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=0)
-plan_model = PlanModel(redis_client_plan)
+es_config = ElasticSearchConfig()
+plan_model = PlanModel(redis_client_plan, es_config)
 logger.info("Created plan model")
 
 from src.models.etag_model import EtagModel

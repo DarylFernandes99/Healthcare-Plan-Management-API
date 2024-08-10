@@ -204,3 +204,6 @@ bundles/
 vendor/pkg/
 pyenv
 Vagrantfile
+
+
+data0*/

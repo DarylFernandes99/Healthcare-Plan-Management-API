@@ -6,6 +6,11 @@ https://blog.postman.com/how-to-access-google-apis-using-oauth-in-postman/
 $ docker run -d --name my-redis-stack -p 6379:6379 redis
 ```
 
+## Docker command to create RabbitMQ image
+```
+$ docker run -d -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+```
+
 ### Contents of .env file
 ```
 # .env
@@ -24,4 +29,176 @@ REDIS_PROD_HOST = "localhost"
 REDIS_PROD_PORT = "6379"
 PROD_VERSION = "v1"
 PROD_OAUTH_CLIENT_ID = "<OAUTH_CLIENT_ID>"
+```
+
+### Elastic Search Dev Console queries
+```
+# Get Plan
+GET _search
+{
+  "query": {
+    "match": {
+      "_id": "12xvxc345ssdsds-508"
+    }
+  }
+}
+
+# Get Plans children
+GET _search
+{
+  "query": {
+    "has_parent": {
+      "parent_type": "plan",
+      "query": {
+        "term": {
+          "_id": "12xvxc345ssdsds-508"
+        }
+      }
+    }
+  }
+}
+
+# Get Parent of planCostShare with copay greater than or equal to 1
+GET _search
+{
+  "query": {
+    "has_child": {
+      "type": "planCostShare",
+      "query": {
+        "range": {
+          "copay": {
+            "gte": 1
+          }
+        }
+      }
+    }
+  }
+}
+
+# Get planCostShare of Plan
+GET _search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "term": {
+            "objectType": {
+              "value": "membercostshare"
+            }
+          }
+        },
+        {
+          "has_parent": {
+            "parent_type": "plan",
+            "query": {
+              "term": {
+                "_id": "12xvxc345ssdsds-508"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+# Get linkedPlanService of Plan
+GET _search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "term": {
+            "objectType": {
+              "value": "planservice"
+            }
+          }
+        },
+        {
+          "has_parent": {
+            "parent_type": "plan",
+            "query": {
+              "term": {
+                "_id": "12xvxc345ssdsds-508"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+# Get linkedPlanServices children
+GET _search
+{
+  "query": {
+    "has_parent": {
+      "parent_type": "linkedPlanService",
+      "query": {
+        "term": {
+          "_id": "27283xvx9asdff-504"
+        }
+      }
+    }
+  }
+}
+
+# Get planCostShare of linkedPlanService
+GET _search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "term": {
+            "objectType": {
+              "value": "membercostshare"
+            }
+          }
+        },
+        {
+          "has_parent": {
+            "parent_type": "linkedPlanService",
+            "query": {
+              "term": {
+                "_id": "27283xvx9asdff-504"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+# Get linkedService of linkedPlanService
+GET _search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "term": {
+            "objectType": {
+              "value": "service"
+            }
+          }
+        },
+        {
+          "has_parent": {
+            "parent_type": "linkedPlanService",
+            "query": {
+              "term": {
+                "_id": "27283xvx9asdff-504"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
 ```
