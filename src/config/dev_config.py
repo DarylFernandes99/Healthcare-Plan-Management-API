@@ -14,5 +14,8 @@ class DevConfig:
         self.LOG_LEVEL = logging.DEBUG
         self.REDIS_HOST = os.environ.get('REDIS_DEV_HOST')
         self.REDIS_PORT = os.environ.get('REDIS_DEV_PORT')
+        self.RABBITMQ_HOST = os.environ.get('RABBITMQ_DEV_HOST')
+        self.RABBITMQ_PORT = os.environ.get('RABBITMQ_DEV_PORT')
         self.VERSION = os.environ.get('DEV_VERSION')
         self.OAUTH_CLIENT_ID = os.environ.get('DEV_OAUTH_CLIENT_ID')
+        self.ELASTIC_HOST = os.environ.get('DEV_ELASTIC_HOST')
