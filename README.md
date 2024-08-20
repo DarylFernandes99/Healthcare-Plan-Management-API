@@ -11,6 +11,15 @@ $ docker run -d --name my-redis-stack -p 6379:6379 redis
 $ docker run -d -p 5672:5672 -p 15672:15672 rabbitmq:3-management
 ```
 
+## Start Elastic Search and Kibana cluster
+```
+To start the cluster
+$ docker-compose up
+
+To stop the cluster
+$ docker-compose down
+```
+
 ### Contents of .env file
 ```
 # .env
@@ -20,21 +29,36 @@ DEV_PORT = "5000"
 DEV_HOST = "localhost"
 REDIS_DEV_HOST = "localhost"
 REDIS_DEV_PORT = "6379"
+RABBITMQ_DEV_HOST = "localhost"
+RABBITMQ_DEV_PORT = "15672"
 DEV_VERSION = "v1"
 DEV_OAUTH_CLIENT_ID = "<OAUTH_CLIENT_ID>"
+DEV_ELASTIC_HOST = "http://localhost:9200/"
 
 PROD_PORT = "5000"
 PROD_HOST = "localhost"
 REDIS_PROD_HOST = "localhost"
 REDIS_PROD_PORT = "6379"
+RABBITMQ_PROD_HOST = "localhost"
+RABBITMQ_PROD_PORT = "15672"
 PROD_VERSION = "v1"
 PROD_OAUTH_CLIENT_ID = "<OAUTH_CLIENT_ID>"
+PROD_ELASTIC_HOST = "http://localhost:9200/"
 ```
 
 ### Elastic Search Dev Console queries
 ```
+# Get All Plans
+GET /plans/_search
+{
+  "query": {
+    "match_all": {
+    }
+  }
+}
+
 # Get Plan
-GET _search
+GET /plans/_search
 {
   "query": {
     "match": {
@@ -44,7 +68,7 @@ GET _search
 }
 
 # Get Plans children
-GET _search
+GET /plans/_search
 {
   "query": {
     "has_parent": {
@@ -59,7 +83,7 @@ GET _search
 }
 
 # Get Parent of planCostShare with copay greater than or equal to 1
-GET _search
+GET /plans/_search
 {
   "query": {
     "has_child": {
@@ -76,7 +100,7 @@ GET _search
 }
 
 # Get planCostShare of Plan
-GET _search
+GET /plans/_search
 {
   "query": {
     "bool": {
@@ -104,7 +128,7 @@ GET _search
 }
 
 # Get linkedPlanService of Plan
-GET _search
+GET /plans/_search
 {
   "query": {
     "bool": {
@@ -132,7 +156,7 @@ GET _search
 }
 
 # Get linkedPlanServices children
-GET _search
+GET /plans/_search
 {
   "query": {
     "has_parent": {
@@ -147,7 +171,7 @@ GET _search
 }
 
 # Get planCostShare of linkedPlanService
-GET _search
+GET /plans/_search
 {
   "query": {
     "bool": {
@@ -175,7 +199,7 @@ GET _search
 }
 
 # Get linkedService of linkedPlanService
-GET _search
+GET /plans/_search
 {
   "query": {
     "bool": {
