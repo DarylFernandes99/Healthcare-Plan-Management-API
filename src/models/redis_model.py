@@ -10,7 +10,8 @@ class RedisModel:
         self.key_prefix = key_prefix
 
     def get_key(self, id):
-        return f"{self.key_prefix}:{id}"
+        # return f"{self.key_prefix}:{id}"
+        return f"{id}"
 
     def save(self, id, data):
         key = self.get_key(id)
