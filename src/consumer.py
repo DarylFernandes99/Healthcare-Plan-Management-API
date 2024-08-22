@@ -11,7 +11,7 @@ class RabbitMQConsumer(threading.Thread):
     def __init__(self):
         super().__init__()
         self.connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host=config.RABBITMQ_HOST, port=config.RABBITMQ_PORT)
+            pika.ConnectionParameters(host=os.getenv('RABBITMQ_HOST', 'localhost'))
         )
         self.channel = self.connection.channel()
         self.channel.queue_declare(queue='plans')

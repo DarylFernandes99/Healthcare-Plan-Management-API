@@ -289,4 +289,5 @@ class PlanModel(RedisModel):
         return self.delete_multiple_keys(keys)
     
     def check_etag_exists(self, etag):
-        return self.etag_model.get_multiple_keys(f"{self.etag_model.key_prefix}:*:{etag}")
+        return self.etag_model.get_multiple_keys(f"*:{etag}")
+        # return self.etag_model.get_multiple_keys(f"{self.etag_model.key_prefix}:*:{etag}")
