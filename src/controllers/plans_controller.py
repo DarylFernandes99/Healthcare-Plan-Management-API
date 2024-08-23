@@ -124,16 +124,31 @@ def plans_controller(_: dict, plan_id: str) -> Response:
             return Response(status=400)
         # Delete request
         elif request.method == 'DELETE':
-            if plan_model.delete_plan_etag(plan_id):
-                logger.info("Plan deleted successfully - {}".format(plan_id))
+            message = {
+                'action': 'create',
+                'data': plan_id
+            }
+            channel.basic_publish(exchange='', routing_key='plans', body=json.dumps(message))
+            logger.info("Published update message to RabbitMQ")
+            if plan_model.check_key_exists(plan_id):
+                logger.info("Plan not found")
                 return Response(
                     response=json.dumps({
-                        "status": "success",
-                        "message": "Plan deleted successfully"
+                        "status": "failed",
+                        "message": "Plan not found"
                     }),
-                    status=200,
+                    status=404,
                     mimetype="application/json"
                 )
+            logger.info("Plan deleted successfully - {}".format(plan_id))
+            return Response(
+                response=json.dumps({
+                    "status": "success",
+                    "message": "Plan deleted successfully"
+                }),
+                status=200,
+                mimetype="application/json"
+            )
         # PATCH request
         elif request.method == 'PATCH':
             if_match = request.headers.get('If-Match')
@@ -289,7 +304,6 @@ def es_data_controller(_: dict) -> Response:
         if args.get("parent_type"):
             plan_data = plan_model.get_es_children(args.get("parent_type"), args.get("id"))
         else:
-            print(args.get("id"))
             plan_data = plan_model.get_es_plan(args.get("id"))
         
         if not plan_data:

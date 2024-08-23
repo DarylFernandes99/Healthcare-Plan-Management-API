@@ -22,6 +22,9 @@ class RabbitMQConsumer(threading.Thread):
         if plan_data['action'] == 'create':
             logger.info("Creating plan in Redis and ElasticSearch")
             plan_model.create_plan(plan_data['data'])
+        elif plan_data['action'] == 'delete':
+            logger.info("Deleting plan in Redis and ElasticSearch")
+            plan_model.delete_plan_etag(plan_data['data'])
         elif plan_data['action'] == 'update':
             logger.info("Updating plan in Redis and ElasticSearch")
             plan_model.update_plan_partial(plan_data['data']['objectId'], plan_data['data'])
