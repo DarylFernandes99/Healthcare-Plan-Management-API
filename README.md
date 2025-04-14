@@ -16,7 +16,7 @@ This repository provides a robust system for managing healthcare plans with effi
 - **Queue Management:** 
   - RabbitMQ handles the queuing of requests, ensuring efficient processing and reliable execution of operations.
 
-![plot](Architecture.png)
+![plot](https://github.com/DarylFernandes99/Healthcare-Plan-Management-API/blob/main/Architecture.png)
 
 ## Oauth Postman setup
 https://blog.postman.com/how-to-access-google-apis-using-oauth-in-postman/
